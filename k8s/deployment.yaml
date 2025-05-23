@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goserver
+  labels:
+    app: goserver
+spec:
+  selector:
+    matchLabels:
+      app: goserver
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: goserver
+    spec:
+      containers:
+        - name: goserver
+          image: "igooruh/hello-go:latest"
+          # Resources minimum for execute POD it application
+          resources:
+            requests:
+              cpu: 100m
+              memory: 20Mi
+            limits:
+              cpu: 500m
+              memory: 25Mi
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8000 # port container
+            periodSeconds: 5 # 5 segundos
+            failureThreshold: 3 # number of times our application can fail
+            timeoutSeconds: 3 # if test another application as a database this number may change
+            initialDelaySeconds: 30 # wait 10 seconds for testing application
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000 # port container
+            periodSeconds: 5 # 5 segundos
+            failureThreshold: 3 # number of times our application can fail
+            timeoutSeconds: 3 # if test another application as a database this number may change
+            successThreshold: 3
+#            initialDelaySeconds: 10 # wait 10 seconds for testing application
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000 # port container
+            periodSeconds: 5 # 5 segundos
+            failureThreshold: 3 # number of times our application can fail
+            timeoutSeconds: 3 # if test another application as a database this number may change
+            successThreshold: 3
+#            initialDelaySeconds: 10 # wait 10 seconds for testing application
+          envFrom:
+            - configMapRef:
+                name: goserver-env
+            # Create secret
+            - secretRef:
+                name: goserver-secret
+
+          #      Inject confimap at application
+          volumeMounts:
+            - mountPath: "go/myfamily"
+              name: config-family
+              readOnly: true
+
+#      Inject confimap at application
+      volumes:
+        - name: config-family
+          configMap:
+            name: configmap-family
+            items:
+              - key: members
+                path: "family.txt"
+#          env:
+#            - name: NAME
+#              valueFrom:
+#                configMapKeyRef:
+#                  key: NAME
+#                  name: goserver-env
+#            - name: AGE
+#              valueFrom:
+#                configMapKeyRef:
+#                  key: AGE
+#                  name: goserver-env
+#          env:
+#            - name: NAME
+#              value: "igor"
+#            - name: AGE
+#              value: "31"

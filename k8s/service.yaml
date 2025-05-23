@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: goserver-service
+spec:
+  selector:
+    app: goserver
+  type: ClusterIP
+#  type: LoadBalancer # generate external IP on provide cloud
+#  type: NodePort # export specfic node port
+  ports:
+    - name: goserver-service
+      port: 80 # Service port
+      targetPort: 8000 # container port or application on container
+      protocol: TCP
+#      nodePort: 30000 # 30.000 - 32.767
