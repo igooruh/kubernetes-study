@@ -63,9 +63,14 @@ spec:
             - mountPath: "go/myfamily"
               name: config-family
               readOnly: true
+            - mountPath: "go/pvc"
+              name: goserver-volume-pvc
 
 #      Inject confimap at application
       volumes:
+        - name: goserver-volume-pvc
+          persistentVolumeClaim:
+            claimName: goserver-pvc
         - name: config-family
           configMap:
             name: configmap-family
