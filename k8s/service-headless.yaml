@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-h
+spec:
+  selector:
+    app: mysql
+  ports:
+    - port: 3306
+  clusterIP: None
+
+  # Serviço que não aloca um endereço IP de cluster, ao contrário dos serviços padrão, permitindo a
+  # descoberta direta dos IPs individuais dos Pods por meio de DNS, em vez de um único IP virtual com
+  # balanceamento de carga. Ele é usado para aplicações que precisam de comunicação direta com pods específicos,
+  # como bancos de dados distribuídos (StatefulSets) ou sistemas que exigem controle granular, oferecendo uma identidade
+  # de rede estável e descoberta de serviço sem a interferência do kube-proxy
