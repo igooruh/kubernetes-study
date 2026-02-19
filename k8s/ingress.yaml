@@ -12,5 +12,5 @@ spec:
         - pathType: Prefix
           path: "/"
           backend:
-            serviceName: go-server
+            serviceName: goserver-service
             servicePort: 80
